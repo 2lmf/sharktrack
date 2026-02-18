@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a0a1a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SharkTrack" />
+    <title>SharkTrack 🦈</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="app-header">
+        <div class="header-left">
+            <span class="logo">🦈 SharkTrack</span>
+        </div>
+        <div class="header-right">
+            <div class="gps-status" id="gpsStatus">
+                <span class="gps-dot"></span>
+                <span class="gps-label">GPS...</span>
+            </div>
+            <div class="online-status" id="onlineStatus">
+                <span class="online-dot"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== OFFLINE BANNER ===================== -->
+    <div class="offline-banner" id="offlineBanner">
+        📵 Offline — lokacije se spremaju lokalno i sync-aju kad dođe signal
+    </div>
+
+    <!-- ===================== GEOFENCE ALERT ===================== -->
+    <div class="geofence-alert" id="geofenceAlert">
+        <div class="geofence-content">
+            <span class="geofence-icon">📍</span>
+            <div class="geofence-text">
+                <strong id="geofenceTitle">Blizu stare lokacije!</strong>
+                <span id="geofenceSubtitle"></span>
+            </div>
+            <button class="geofence-close" id="geofenceClose">✕</button>
+        </div>
+        <div class="geofence-actions">
+            <button class="btn-geofence-nav" id="geofenceNav">🗺️ Navigiraj</button>
+            <button class="btn-geofence-update" id="geofenceUpdate">✏️ Ažuriraj status</button>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="app-main">
+
+        <!-- ===== TAB: HOME ===== -->
+        <section class="tab-content active" id="tab-home">
+
+            <!-- BIG SAVE BUTTON -->
+            <div class="save-section">
+                <button class="btn-save" id="btnSave">
+                    <span class="btn-save-icon">📍</span>
+                    <span class="btn-save-text">SPREMI LOKACIJU</span>
+                    <span class="btn-save-sub">Tap za trenutnu GPS poziciju</span>
+                </button>
+                <div class="save-feedback" id="saveFeedback"></div>
+            </div>
+
+            <!-- QUICK TAGS -->
+            <div class="section-card">
+                <h3 class="section-title">Brzi tag <span class="tag-optional">(opcionalno)</span></h3>
+                <div class="tags-grid">
+                    <button class="tag-btn" data-tag="Stambeno">🏠<span>Stambeno</span></button>
+                    <button class="tag-btn" data-tag="Industrijsko">🏭<span>Industrijsko</span></button>
+                    <button class="tag-btn" data-tag="Poslovno">🏢<span>Poslovno</span></button>
+                    <button class="tag-btn" data-tag="Nepoznato">❓<span>Nepoznato</span></button>
+                </div>
+            </div>
+
+            <!-- NOTE -->
+            <div class="section-card">
+                <h3 class="section-title">Bilješka <span class="tag-optional">(opcionalno)</span></h3>
+                <div class="note-row">
+                    <input type="text" class="note-input" id="noteInput" placeholder="Kratki opis..." maxlength="100" />
+                    <button class="btn-voice" id="btnVoice" title="Glasovni unos">🎤</button>
+                </div>
+            </div>
+
+            <!-- PHOTO -->
+            <div class="section-card">
+                <h3 class="section-title">Foto <span class="tag-optional">(opcionalno)</span></h3>
+                <div class="photo-row">
+                    <button class="btn-photo" id="btnPhoto">📸 Slikaj</button>
+                    <div class="photo-preview-wrap" id="photoPreviewWrap">
+                        <img class="photo-preview" id="photoPreview" src="" alt="Preview" />
+                        <button class="photo-remove" id="photoRemove">✕</button>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" />
+            </div>
+
+            <!-- ROUTE TRACKING -->
+            <div class="section-card route-card">
+                <div class="route-header">
+                    <div>
+                        <h3 class="section-title">Snimanje rute</h3>
+                        <span class="route-status" id="routeStatus">Nije aktivno</span>
+                    </div>
+                    <button class="btn-route-toggle" id="btnRouteToggle">
+                        <span id="routeToggleIcon">▶</span>
+                        <span id="routeToggleLabel">Start</span>
+                    </button>
+                </div>
+                <div class="route-stats" id="routeStats" style="display:none">
+                    <div class="route-stat">
+                        <span class="route-stat-val" id="routePoints">0</span>
+                        <span class="route-stat-lbl">točaka</span>
+                    </div>
+                    <div class="route-stat">
+                        <span class="route-stat-val" id="routeDuration">00:00</span>
+                        <span class="route-stat-lbl">trajanje</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAILY SUMMARY -->
+            <div class="section-card summary-card">
+                <h3 class="section-title">Danas</h3>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <span class="summary-val" id="summaryCount">0</span>
+                        <span class="summary-lbl">lokacija</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-val" id="summaryPending">0</span>
+                        <span class="summary-lbl">čeka sync</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===== TAB: LISTA ===== -->
+        <section class="tab-content" id="tab-list">
+            <div class="list-header">
+                <h2>Zabilježene lokacije</h2>
+                <div class="list-filter">
+                    <button class="filter-btn active" data-filter="all">Sve</button>
+                    <button class="filter-btn" data-filter="today">Danas</button>
+                    <button class="filter-btn" data-filter="week">Tjedan</button>
+                </div>
+            </div>
+            <div class="locations-list" id="locationsList">
+                <div class="empty-state">
+                    <span>📍</span>
+                    <p>Još nema zabilježenih lokacija</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TAB: MAPA ===== -->
+        <section class="tab-content" id="tab-map">
+            <div id="map"></div>
+        </section>
+
+    </main>
+
+    <!-- ===================== BOTTOM NAV ===================== -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-tab="home" id="navHome">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Početna</span>
+        </button>
+        <button class="nav-btn" data-tab="list" id="navList">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Lista</span>
+        </button>
+        <button class="nav-btn" data-tab="map" id="navMap">
+            <span class="nav-icon">🗺️</span>
+            <span class="nav-label">Mapa</span>
+        </button>
+    </nav>
+
+    <!-- ===================== STATUS UPDATE MODAL ===================== -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal">
+            <h3>Ažuriraj status</h3>
+            <div class="status-options">
+                <button class="status-btn" data-status="Nova">🆕 Nova</button>
+                <button class="status-btn" data-status="Kontaktirano">📞 Kontaktirano</button>
+                <button class="status-btn" data-status="Ponuda poslana">📄 Ponuda poslana</button>
+                <button class="status-btn" data-status="Zatvoren posao">✅ Zatvoren posao</button>
+                <button class="status-btn" data-status="Nije zainteresiran">❌ Nije zainteresiran</button>
+            </div>
+            <button class="modal-close" id="statusModalClose">Zatvori</button>
+        </div>
+    </div>
+
+    <!-- ===================== TOAST ===================== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/offline.js"></script>
+    <script src="js/sheets.js"></script>
+    <script src="js/gps.js"></script>
+    <script src="js/photo.js"></script>
+    <script src="js/route.js"></script>
+    <script src="js/geofence.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
