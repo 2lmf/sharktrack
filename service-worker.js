@@ -1,18 +1,20 @@
 // SharkTrack Service Worker - Offline Support
-const CACHE_NAME = 'sharktrack-v1';
+// v3 - Fixed paths for GitHub Pages /sharktrack/ deployment
+const CACHE_NAME = 'sharktrack-v3';
+const BASE = '/sharktrack';
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/css/style.css',
-    '/js/app.js',
-    '/js/gps.js',
-    '/js/sheets.js',
-    '/js/offline.js',
-    '/js/route.js',
-    '/js/geofence.js',
-    '/js/photo.js',
-    '/js/ui.js',
+    `${BASE}/`,
+    `${BASE}/index.html`,
+    `${BASE}/manifest.json`,
+    `${BASE}/css/style.css`,
+    `${BASE}/js/app.js`,
+    `${BASE}/js/gps.js`,
+    `${BASE}/js/sheets.js`,
+    `${BASE}/js/offline.js`,
+    `${BASE}/js/route.js`,
+    `${BASE}/js/geofence.js`,
+    `${BASE}/js/photo.js`,
+    `${BASE}/js/ui.js`,
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 ];
@@ -56,7 +58,6 @@ self.addEventListener('sync', e => {
 });
 
 async function syncOfflineData() {
-    // Notify all clients to sync
     const clients = await self.clients.matchAll();
     clients.forEach(client => client.postMessage({ type: 'SYNC_NOW' }));
 }
