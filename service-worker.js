@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v4 - Added planner.js and Edit Location feature
-const CACHE_NAME = 'sharktrack-v4';
+// v5 - Header logo increase, Edit Modal polish (white text, label styles)
+const CACHE_NAME = 'sharktrack-v5';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
