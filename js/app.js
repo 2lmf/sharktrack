@@ -24,6 +24,7 @@ async function init() {
     window.PhotoCapture.init();
     window.RouteTracker.init();
     window.Geofence.init();
+    window.Planner.init();
 
     // Start GPS watching
     window.GPS.startWatching();

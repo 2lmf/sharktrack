@@ -162,6 +162,26 @@
             </div>
         </section>
 
+        <!-- ===== TAB: PLANNER ===== -->
+        <section class="tab-content" id="tab-planner">
+            <div class="list-header">
+                <h2>Kamo idemo? 🗺️</h2>
+                <p style="font-size:0.8rem; color:#888;">Pronađi kupce na ruti do odredišta (30km)</p>
+            </div>
+
+            <div class="planner-card">
+                <div class="planner-input-group">
+                    <input type="text" id="plannerDest" class="planner-input" placeholder="Upiši grad (npr. Rijeka)...">
+                    <button id="plannerSearchBtn" class="btn-planner-search">TRAŽI 🔍</button>
+                </div>
+                <div id="plannerStatus" class="planner-status"></div>
+            </div>
+
+            <div id="plannerResults" class="locations-list">
+                <!-- Results will be injected here -->
+            </div>
+        </section>
+
         <!-- ===== TAB: MAPA ===== -->
         <section class="tab-content" id="tab-map">
             <div id="map"></div>
@@ -171,15 +191,19 @@
 
     <!-- ===================== BOTTOM NAV ===================== -->
     <nav class="bottom-nav">
-        <button class="nav-btn active" data-tab="home" id="navHome">
+        <button class="nav-btn active" data-tab="tab-home" id="navHome">
             <span class="nav-icon">🏠</span>
             <span class="nav-label">Početna</span>
         </button>
-        <button class="nav-btn" data-tab="list" id="navList">
+        <button class="nav-btn" data-tab="tab-list" id="navList">
             <span class="nav-icon">📋</span>
             <span class="nav-label">Lista</span>
         </button>
-        <button class="nav-btn" data-tab="map" id="navMap">
+        <button class="nav-btn" data-tab="tab-planner">
+            <span class="nav-icon">🚀</span>
+            <span class="nav-label">Planer</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-map" id="navMap">
             <span class="nav-icon">🗺️</span>
             <span class="nav-label">Mapa</span>
         </button>
@@ -212,6 +236,7 @@
     <script src="js/route.js"></script>
     <script src="js/geofence.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/planner.js"></script>
     <script src="js/app.js"></script>
 
 </body>
