@@ -206,7 +206,7 @@ function renderList() {
           <button class="btn-maps" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
           <button class="btn-share" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
           <span class="location-status">${isPending ? '⏳ Čeka sync' : (loc.status || 'Nova')}</span>
-          ${canEdit ? `<button class="btn-edit" data-idx="${i}" style="margin-left:auto; background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer;">✏️ Uredi</button>` : ''}
+          ${canEdit ? `<button class="btn-edit" data-idx="${i}" style="margin-left:auto; background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; color:white;">✏️ Uredi</button>` : ''}
         </div>
       </div>`;
     }).join('');

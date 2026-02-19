@@ -73,7 +73,11 @@ const Planner = {
 
             // 4. Filter Saved Locations
             statusEl.innerHTML = '📂 Pretražujem tvoje spremljene lokacije...';
-            const allLocations = await window.SheetAPI.getAllLocations();
+            // 4. Filter Saved Locations
+            statusEl.innerHTML = '📂 Pretražujem tvoje spremljene lokacije...';
+            // Fix: SheetsAPI with 's' and getLocations without 'All' and handle object response
+            const response = await window.SheetsAPI.getLocations();
+            const allLocations = response.locations || [];
 
             // Filter logic: check distance to route
             // Optimization: check distance to start/end bounding box first? 
