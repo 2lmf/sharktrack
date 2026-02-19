@@ -117,13 +117,15 @@ function refreshMapMarkers() {
             iconAnchor: [15, 30]
         });
 
+        const mapsUrl = loc.mapsLink || `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
+
         const marker = L.marker([loc.lat, loc.lng], { icon })
             .addTo(map)
             .bindPopup(`
         <strong>${loc.tag || 'Lokacija'}</strong><br>
         ${loc.datum || ''} ${loc.sat || ''}<br>
         ${loc.biljeska || ''}<br>
-        <a href="${loc.mapsLink}" target="_blank">📍 Otvori u Maps</a>
+        <a href="${mapsUrl}" target="_blank">📍 Otvori u Maps</a>
       `);
 
         mapMarkers.push(marker);

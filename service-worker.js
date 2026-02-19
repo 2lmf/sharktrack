@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
 // v5 - Header logo increase, Edit Modal polish (white text, label styles)
-const CACHE_NAME = 'sharktrack-v5';
+const CACHE_NAME = 'sharktrack-v6';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
