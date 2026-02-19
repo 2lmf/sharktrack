@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #signature {
+            background: #ffffff;
+            /* White background */
+            padding: 20px 40px;
+            border-radius: 12px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            /* Optional: Add a subtle border or shadow to make it pop if put on white bg */
+            /* box-shadow: 0 4px 20px rgba(0,0,0,0.5); */
+        }
+
+        .row-top {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .lmf-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            color: #000;
+            /* Black text */
+            font-size: 28px;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .lmf-brand span {
+            color: #E67E22;
+        }
+
+        .shark-logo {
+            height: 110px;
+            /* Increased size */
+            width: auto;
+            border-radius: 6px;
+            /* Matching style.css */
+        }
+
+        .tagline {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            letter-spacing: 4px;
+            font-weight: 900;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .tagline .arch {
+            color: #000;
+            /* Black */
+        }
+
+        .tagline .code {
+            color: #E67E22;
+            /* Orange */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="signature">
+        <div class="row-top">
+            <div class="lmf-brand">2LMF <span>PRO</span></div>
+            <img src="SharpShark_GreyOrange.png" class="shark-logo" alt="Logo">
+        </div>
+        <div class="tagline">
+            <span class="arch">ARCHITECTURAL</span> <span class="code">CODE</span>
+        </div>
+    </div>
+</body>
+
+</html>
