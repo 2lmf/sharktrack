@@ -20,6 +20,7 @@ function doPost(e) {
       case 'saveLocation': result = saveLocation(data); break;
       case 'saveRoute':    result = saveRoute(data);    break;
       case 'uploadPhoto':  result = uploadPhoto(data);  break;
+      case 'updateLocation': result = updateLocation(data); break;
       default:
         result = { success: false, error: 'Unknown action: ' + action };
     }
@@ -70,11 +71,14 @@ function saveLocation(data) {
     sheet = ss.insertSheet('Lokacije');
     sheet.appendRow([
       'Datum', 'Sat', 'Lat', 'Lng', 'Maps Link',
-      'Tag', 'Bilješka', 'Foto Link', 'Status'
+      'Tag', 'Bilješka', 'Foto Link', 'Status', 'Kontakt'
     ]);
     sheet.setFrozenRows(1);
     formatHeaderRow(sheet);
   }
+
+  // Ensure Kontakt column exists (for older sheets)
+  ensureKontaktColumn(sheet);
 
   const now = new Date();
   const datum = Utilities.formatDate(now, 'Europe/Zagreb', 'dd.MM.yyyy');
@@ -86,14 +90,44 @@ function saveLocation(data) {
   const biljeska = data.note || '';
   const fotoLink = data.photoLink || '';
   const status = 'Nova';
+  const kontakt = data.contact || '';
 
-  sheet.appendRow([datum, sat, lat, lng, mapsLink, tag, biljeska, fotoLink, status]);
+  sheet.appendRow([datum, sat, lat, lng, mapsLink, tag, biljeska, fotoLink, status, kontakt]);
 
   // Style the Maps link cell
   const lastRow = sheet.getLastRow();
   sheet.getRange(lastRow, 5).setFormula(`=HYPERLINK("${mapsLink}","📍 Otvori")`);
 
   return { success: true, mapsLink: mapsLink, row: lastRow };
+}
+
+// ============================================================
+// UPDATE LOCATION
+// ============================================================
+
+function updateLocation(data) {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sheet = ss.getSheetByName('Lokacije');
+  
+  if (!sheet) return { success: false, error: 'Sheet Lokacije not found' };
+
+  const rowIndex = parseInt(data.rowIndex);
+  if (isNaN(rowIndex) || rowIndex < 2) {
+    return { success: false, error: 'Invalid rowIndex' };
+  }
+
+  // Update specific columns
+  // Structure: 1:Datum, 2:Sat, 3:Lat, 4:Lng, 5:Maps, 6:Tag, 7:Bilješka, 8:Foto, 9:Status, 10:Kontakt
+  
+  if (data.note !== undefined) sheet.getRange(rowIndex, 7).setValue(data.note);
+  if (data.photoLink !== undefined && data.photoLink !== '') sheet.getRange(rowIndex, 8).setValue(data.photoLink);
+  if (data.status !== undefined) sheet.getRange(rowIndex, 9).setValue(data.status);
+  if (data.contact !== undefined) {
+      ensureKontaktColumn(sheet);
+      sheet.getRange(rowIndex, 10).setValue(data.contact);
+  }
+
+  return { success: true };
 }
 
 // ============================================================
@@ -166,10 +200,17 @@ function getLocations() {
     return { success: true, locations: [] };
   }
 
-  const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 9).getValues();
+  ensureKontaktColumn(sheet);
+
+  // Read up to 10 columns
+  const lastCol = sheet.getLastColumn();
+  const numCols = lastCol < 10 ? lastCol : 10;
+  
+  const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, numCols).getValues();
+  
   const locations = data
-    .filter(row => row[2] && row[3]) // must have lat/lng
-    .map(row => ({
+    .map((row, index) => ({
+      rowIndex:  index + 2, // 1-based row index in sheet
       datum:     row[0],
       sat:       row[1],
       lat:       parseFloat(row[2]),
@@ -178,8 +219,10 @@ function getLocations() {
       tag:       row[5],
       biljeska:  row[6],
       fotoLink:  row[7],
-      status:    row[8]
-    }));
+      status:    row[8],
+      kontakt:   row[9] || '' // 10th column (index 9)
+    }))
+    .filter(loc => loc.lat && loc.lng); // Filter invalid rows
 
   return { success: true, locations: locations };
 }
@@ -187,6 +230,21 @@ function getLocations() {
 // ============================================================
 // HELPERS
 // ============================================================
+
+function ensureKontaktColumn(sheet) {
+  const lastCol = sheet.getLastColumn();
+  // Check if "Kontakt" header is missing (assuming it should be col 10 or appended)
+  // Simple check: if last col is 9 (Status), add Kontakt
+  if (lastCol === 9) {
+     const header = sheet.getRange(1, 10);
+     if (header.getValue() === '') {
+         header.setValue('Kontakt');
+         header.setBackground('#1a1a2e');
+         header.setFontColor('#ffffff');
+         header.setFontWeight('bold');
+     }
+  }
+}
 
 function formatHeaderRow(sheet) {
   const headerRange = sheet.getRange(1, 1, 1, sheet.getLastColumn());

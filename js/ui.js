@@ -7,25 +7,30 @@ let mapMarkers = [];
 let mapInitialized = false;
 let currentFilter = 'all';
 let pendingStatusLocation = null;
+let editingLocation = null; // Track which location is being edited
 const sessionLocations = []; // locations saved this session
 
 // ---- GPS STATUS ----
 function setGPSStatus(state, label) {
     const el = document.getElementById('gpsStatus');
-    el.className = `gps-status ${state}`;
-    el.querySelector('.gps-label').textContent = label;
+    if (el) {
+        el.className = `gps-status ${state}`;
+        el.querySelector('.gps-label').textContent = label;
+    }
 }
 
 // ---- ONLINE STATUS ----
 function updateOnlineStatus() {
     const el = document.getElementById('onlineStatus');
     const banner = document.getElementById('offlineBanner');
-    if (navigator.onLine) {
-        el.classList.remove('offline');
-        banner.classList.remove('show');
-    } else {
-        el.classList.add('offline');
-        banner.classList.add('show');
+    if (el && banner) {
+        if (navigator.onLine) {
+            el.classList.remove('offline');
+            banner.classList.remove('show');
+        } else {
+            el.classList.add('offline');
+            banner.classList.add('show');
+        }
     }
 }
 
@@ -33,6 +38,7 @@ function updateOnlineStatus() {
 let toastTimeout = null;
 function showToast(msg, duration = 3000) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
     clearTimeout(toastTimeout);
@@ -52,11 +58,22 @@ function initTabs() {
 function switchTab(tab) {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-    document.getElementById(`tab-${tab}`).classList.add('active');
 
-    if (tab === 'map') initMap();
-    if (tab === 'list') renderList();
+    const navBtn = document.querySelector(`[data-tab="${tab}"]`);
+    const tabContent = document.getElementById(tab); // ID is "tab-home", "tab-list" etc. in HTML? No, IDs are tab-home, etc.
+
+    // HTML uses id="tab-home", id="tab-list". Dataset uses data-tab="tab-home".
+    // Wait, my HTML uses data-tab="tab-home".
+    // Let's check consistency.
+    // HTML: <button class="nav-btn" data-tab="tab-planner">
+    // HTML: <section class="tab-content" id="tab-planner">
+    // So `tab` variable holds "tab-planner".
+
+    if (navBtn) navBtn.classList.add('active');
+    if (tabContent) tabContent.classList.add('active');
+
+    if (tab === 'tab-map') initMap();
+    if (tab === 'tab-list') renderList();
 }
 
 // ---- MAP ----
@@ -122,6 +139,7 @@ function refreshMapMarkers() {
 function addToSessionLocations(loc) {
     sessionLocations.unshift(loc);
     updateSummary();
+    // If list is active, re-render
     if (document.getElementById('tab-list').classList.contains('active')) {
         renderList();
     }
@@ -130,6 +148,8 @@ function addToSessionLocations(loc) {
 
 function renderList() {
     const container = document.getElementById('locationsList');
+    if (!container) return; // Planner results might reuse logic, but this is specific to list tab
+
     const allLocs = [...sessionLocations, ...(window.Geofence?.locations || [])];
 
     // Deduplicate
@@ -147,7 +167,6 @@ function renderList() {
     const filtered = unique.filter(l => {
         if (currentFilter === 'today') return l.datum === todayStr;
         if (currentFilter === 'week') {
-            // within last 7 days
             if (!l.datum) return true;
             const parts = l.datum.split('.');
             if (parts.length < 3) return true;
@@ -171,23 +190,34 @@ function renderList() {
         const emoji = tagEmoji[loc.tag] || '📍';
         const mapsUrl = loc.mapsLink || `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
         const isPending = loc.pending;
+        const canEdit = loc.rowIndex && !isPending; // Can only edit if we have row index and not pending
 
         return `
-      <div class="location-item ${isPending ? 'location-pending' : ''}" data-idx="${i}">
+      <div class="location-item ${isPending ? 'location-pending' : ''}">
         <div class="location-item-header">
           <span class="location-tag">${emoji} ${loc.tag || 'Lokacija'}</span>
           <span class="location-time">${loc.datum || ''} ${loc.sat || ''}</span>
         </div>
+        ${loc.kontakt ? `<div class="location-note" style="margin-top:4px;">👤 ${loc.kontakt}</div>` : ''}
         ${loc.biljeska ? `<div class="location-note">${loc.biljeska}</div>` : ''}
         <div class="location-coords">${Number(loc.lat).toFixed(5)}, ${Number(loc.lng).toFixed(5)}</div>
         ${loc.fotoLink ? `<img class="location-photo" src="${loc.fotoLink}" alt="Foto" onclick="window.open('${loc.fotoLink}','_blank')" />` : ''}
         <div class="location-actions">
           <button class="btn-maps" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
-          <button class="btn-share" onclick="shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
+          <button class="btn-share" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
           <span class="location-status">${isPending ? '⏳ Čeka sync' : (loc.status || 'Nova')}</span>
+          ${canEdit ? `<button class="btn-edit" data-idx="${i}" style="margin-left:auto; background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer;">✏️ Uredi</button>` : ''}
         </div>
       </div>`;
     }).join('');
+
+    // Attach edit listeners
+    container.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idx = parseInt(btn.dataset.idx);
+            openEditModal(filtered[idx]);
+        });
+    });
 }
 
 function shareLocation(mapsUrl, tag) {
@@ -213,39 +243,171 @@ function initFilters() {
 
 // ---- SUMMARY ----
 async function updateSummary() {
-    document.getElementById('summaryCount').textContent = sessionLocations.length;
-    const pending = await window.OfflineDB.getPendingCount();
-    document.getElementById('summaryPending').textContent = pending;
+    const elCount = document.getElementById('summaryCount');
+    const elPending = document.getElementById('summaryPending');
+    if (elCount) elCount.textContent = sessionLocations.length;
+    if (elPending) elPending.textContent = await window.OfflineDB.getPendingCount();
 }
 
-// ---- STATUS MODAL ----
+// ---- MODALS (Status + Edit) ----
+function initModals() {
+    // Status Modal
+    const statusModal = document.getElementById('statusModal');
+    if (statusModal) {
+        document.getElementById('statusModalClose').addEventListener('click', () => {
+            statusModal.classList.remove('show');
+        });
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // ... status update logic if implemented ...
+                statusModal.classList.remove('show');
+                showToast(`✅ Status ažuriran: ${btn.dataset.status}`);
+            });
+        });
+    }
+
+    // Edit Modal
+    const editModal = document.getElementById('editModal');
+    if (editModal) {
+        document.getElementById('editModalClose').addEventListener('click', () => {
+            closeEditModal();
+        });
+
+        // Save
+        document.getElementById('editModalSave').addEventListener('click', handleEditSave);
+
+        // Photo preview
+        const photoInput = document.getElementById('editPhotoInput');
+        if (photoInput) {
+            photoInput.addEventListener('change', async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const base64 = await fileToBase64(e.target.files[0]);
+                    const preview = document.getElementById('editPhotoPreview');
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                }
+            });
+        }
+    }
+}
+
 function showStatusModal(loc) {
     pendingStatusLocation = loc;
     document.getElementById('statusModal').classList.add('show');
 }
 
-function initStatusModal() {
-    document.getElementById('statusModalClose').addEventListener('click', () => {
-        document.getElementById('statusModal').classList.remove('show');
-    });
+function openEditModal(loc) {
+    editingLocation = loc;
+    const modal = document.getElementById('editModal');
 
-    document.querySelectorAll('.status-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const status = btn.dataset.status;
-            document.getElementById('statusModal').classList.remove('show');
-            showToast(`✅ Status ažuriran: ${status}`);
-            // Note: status update to Sheet would require additional API call
-            // For now, visual feedback only
-        });
+    document.getElementById('editRowIndex').value = loc.rowIndex;
+    document.getElementById('editContact').value = loc.kontakt || '';
+    document.getElementById('editNote').value = loc.biljeska || '';
+
+    const preview = document.getElementById('editPhotoPreview');
+    if (loc.fotoLink) {
+        preview.src = loc.fotoLink;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+        preview.src = '';
+    }
+
+    // Reset file input
+    document.getElementById('editPhotoInput').value = '';
+
+    modal.classList.add('show');
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editModal');
+    modal.classList.remove('show');
+    editingLocation = null;
+}
+
+async function handleEditSave() {
+    if (!editingLocation) return;
+
+    const saveBtn = document.getElementById('editModalSave');
+    const origText = saveBtn.textContent;
+    saveBtn.textContent = 'Spremam...';
+    saveBtn.disabled = true;
+
+    try {
+        const rowIndex = document.getElementById('editRowIndex').value;
+        const contact = document.getElementById('editContact').value.trim();
+        const note = document.getElementById('editNote').value.trim();
+        const photoInput = document.getElementById('editPhotoInput');
+
+        let photoLink = editingLocation.fotoLink;
+
+        // Upload new photo if selected
+        if (photoInput.files && photoInput.files[0]) {
+            saveBtn.textContent = 'Upload slike...';
+            const file = photoInput.files[0];
+            const base64 = await fileToBase64(file);
+            const res = await window.SheetsAPI.uploadPhoto(base64, `update_${Date.now()}.jpg`);
+            if (res.success) {
+                photoLink = res.photoLink;
+            } else {
+                throw new Error('Upload slike neuspješan');
+            }
+        }
+
+        saveBtn.textContent = 'Ažuriram Sheet...';
+
+        // Call API
+        const updateData = {
+            rowIndex: rowIndex,
+            contact: contact,
+            note: note,
+            photoLink: photoLink,
+            // status: editingLocation.status // Keep existing status or add dropdown?
+        };
+
+        const result = await window.SheetsAPI.updateLocation(updateData);
+
+        if (result.success) {
+            // Update local object
+            editingLocation.kontakt = contact;
+            editingLocation.biljeska = note;
+            editingLocation.fotoLink = photoLink;
+
+            // Re-render
+            renderList();
+            showToast('✅ Podaci ažurirani!');
+            closeEditModal();
+        } else {
+            throw new Error(result.error || 'Greška kod ažuriranja');
+        }
+
+    } catch (err) {
+        console.error(err);
+        showToast('❌ Greška: ' + err.message);
+    } finally {
+        saveBtn.textContent = origText;
+        saveBtn.disabled = false;
+    }
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
 }
+
 
 // ---- SAVE FEEDBACK ----
 function setSaveFeedback(msg, color = 'var(--green)') {
     const el = document.getElementById('saveFeedback');
-    el.textContent = msg;
-    el.style.color = color;
-    setTimeout(() => { el.textContent = ''; }, 4000);
+    if (el) {
+        el.textContent = msg;
+        el.style.color = color;
+        setTimeout(() => { el.textContent = ''; }, 4000);
+    }
 }
 
 window.UI = {
@@ -260,9 +422,11 @@ window.UI = {
     renderList,
     updateSummary,
     showStatusModal,
-    initStatusModal,
+    initModals, // New unified init
+    initStatusModal: () => { }, // Deprecated, kept for app.js compat if needed
     initFilters,
-    setSaveFeedback
+    setSaveFeedback,
+    openEditModal
 };
 
 // Make shareLocation global for inline onclick

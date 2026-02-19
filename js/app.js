@@ -16,7 +16,7 @@ async function init() {
     // Init UI components
     window.UI.initTabs();
     window.UI.initFilters();
-    window.UI.initStatusModal();
+    window.UI.initModals(); // Changed from initStatusModal
     window.UI.updateOnlineStatus();
     window.UI.updateSummary();
 
@@ -112,9 +112,17 @@ async function handleSave() {
             if (result.success) {
                 window.UI.showToast('✅ Lokacija spremljena u Sheets!');
                 window.UI.setSaveFeedback(`✅ Spremljeno ${sat} — ${tag || 'bez taga'}`);
+
+                // Add to session locations with rowIndex for editing
                 window.UI.addToSessionLocations({
-                    ...locationData, datum, sat, mapsLink, status: 'Nova'
+                    ...locationData,
+                    datum,
+                    sat,
+                    mapsLink,
+                    status: 'Nova',
+                    rowIndex: result.row // Capture row index
                 });
+
                 window.Geofence.addLocation({ ...locationData, datum, sat, mapsLink });
             } else {
                 throw new Error(result.error);

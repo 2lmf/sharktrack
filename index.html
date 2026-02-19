@@ -224,6 +224,39 @@
         </div>
     </div>
 
+    <!-- ===================== EDIT LOCATION MODAL ===================== -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h3>Uredi lokaciju ✏️</h3>
+            <input type="hidden" id="editRowIndex">
+
+            <div class="input-group">
+                <label>Kontakt osoba / Info</label>
+                <input type="text" id="editContact" class="planner-input" placeholder="Ime, broj, email...">
+            </div>
+
+            <div class="input-group">
+                <label>Bilješka</label>
+                <textarea id="editNote" class="planner-input" rows="3" placeholder="Dodaj bilješku..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Fotografija</label>
+                <div class="photo-edit-area">
+                    <img id="editPhotoPreview" class="edit-photo-preview" src="" style="display:none;">
+                    <label for="editPhotoInput" class="btn-photo-upload">📸 Dodaj / Promijeni sliku</label>
+                    <input type="file" id="editPhotoInput" accept="image/*" capture="environment" style="display:none;">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-close" id="editModalClose" style="background:var(--bg3);">Odustani</button>
+                <button class="modal-save" id="editModalSave"
+                    style="background:var(--accent); color:#000; font-weight:700;">SPREMI</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===================== TOAST ===================== -->
     <div class="toast" id="toast"></div>
 

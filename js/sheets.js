@@ -35,6 +35,10 @@ async function uploadPhoto(imageBase64, filename) {
     return apiPost({ action: 'uploadPhoto', imageBase64, filename });
 }
 
+async function updateLocation(data) {
+    return apiPost({ action: 'updateLocation', ...data });
+}
+
 async function getLocations() {
     return apiGet({ action: 'getLocations' });
 }
@@ -43,6 +47,7 @@ window.SheetsAPI = {
     saveLocation,
     saveRoute,
     uploadPhoto,
+    updateLocation,
     getLocations,
     isConfigured: () => SCRIPT_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
 };
