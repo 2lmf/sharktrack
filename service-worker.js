@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v3 - Fixed paths for GitHub Pages /sharktrack/ deployment
-const CACHE_NAME = 'sharktrack-v3';
+// v4 - Added planner.js and Edit Location feature
+const CACHE_NAME = 'sharktrack-v4';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
@@ -10,6 +10,7 @@ const ASSETS = [
     `${BASE}/js/app.js`,
     `${BASE}/js/gps.js`,
     `${BASE}/js/sheets.js`,
+    `${BASE}/js/planner.js`,
     `${BASE}/js/offline.js`,
     `${BASE}/js/route.js`,
     `${BASE}/js/geofence.js`,
