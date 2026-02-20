@@ -233,28 +233,37 @@ function getLocations() {
 // ============================================================
 
 function sendDailyReport(data) {
-  // data: { date, stats: {total, ...}, locations: [...] }
-  
-  // 1. Generate HTML
-  const htmlContent = createReportHtml(data);
-  
-  // 2. Convert to PDF
-  const blob = Utilities.newBlob(htmlContent, 'text/html', `SharkTrack_Report_${data.date}.html`);
-  const pdf = blob.getAs('application/pdf').setName(`SharkTrack_Izvjestaj_${data.date}.pdf`);
-  
-  // 3. Send Email
-  const recipient = Session.getActiveUser().getEmail(); // Sends to the owner of the script/user running it
-  const subject = `🦈 SharkTrack Dnevni Izvještaj - ${data.date}`;
-  const body = `Bok,\n\nU privitku je tvoj dnevni izvještaj za ${data.date}.\n\nUkupno lokacija: ${data.stats.total}\n\nLijep pozdrav,\nSharkTrack`;
-  
-  MailApp.sendEmail({
-    to: recipient,
-    subject: subject,
-    body: body,
-    attachments: [pdf]
-  });
-  
-  return { success: true };
+  try {
+    // 1. Generate HTML
+    const htmlContent = createReportHtml(data);
+    
+    // 2. Convert to PDF
+    const blob = Utilities.newBlob(htmlContent, 'text/html', `SharkTrack_Report_${data.date}.html`);
+    const pdf = blob.getAs('application/pdf').setName(`SharkTrack_Izvjestaj_${data.date}.pdf`);
+    
+    // 3. Send Email
+    // Note: getActiveUser().getEmail() can be empty in some Web App deployments.
+    // getEffectiveUser().getEmail() returns the email of the person who deployed the script.
+    const recipient = Session.getEffectiveUser().getEmail(); 
+    
+    if (!recipient) {
+      throw new Error("Ne mogu dohvatiti email primatelja. Provjeri dozvole skripte.");
+    }
+
+    const subject = `🦈 SharkTrack Dnevni Izvještaj - ${data.date}`;
+    const body = `Bok,\n\nU privitku je tvoj dnevni izvještaj za ${data.date}.\n\nUkupno lokacija: ${data.stats.total}\n\nLijep pozdrav,\nSharkTrack`;
+    
+    MailApp.sendEmail({
+      to: recipient,
+      subject: subject,
+      body: body,
+      attachments: [pdf]
+    });
+    
+    return { success: true, recipient: recipient };
+  } catch (err) {
+    return { success: false, error: "Greška kod slanja izvještaja: " + err.toString() };
+  }
 }
 
 function createReportHtml(data) {
