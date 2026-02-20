@@ -72,8 +72,8 @@ function initGeofence() {
 
     document.getElementById('geofenceNav').addEventListener('click', () => {
         if (geofenceAlertLocation) {
-            const url = geofenceAlertLocation.mapsLink ||
-                `https://www.google.com/maps?q=${geofenceAlertLocation.lat},${geofenceAlertLocation.lng}`;
+            // Use Google Maps Navigation URL format
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${geofenceAlertLocation.lat},${geofenceAlertLocation.lng}`;
             window.open(url, '_blank');
         }
         hideAlert();

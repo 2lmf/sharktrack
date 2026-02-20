@@ -246,7 +246,7 @@ body {
     flex: 1;
     padding: 8px;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: 50px;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -739,7 +739,7 @@ body {
 .btn-share,
 .btn-status {
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: 50px;
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;

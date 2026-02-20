@@ -117,7 +117,10 @@ function refreshMapMarkers() {
             iconAnchor: [15, 30]
         });
 
-        const mapsUrl = loc.mapsLink || `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
+        let mapsUrl = loc.mapsLink;
+        if (!mapsUrl || mapsUrl === 'undefined' || !mapsUrl.startsWith('http')) {
+            mapsUrl = `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
+        }
 
         const marker = L.marker([loc.lat, loc.lng], { icon })
             .addTo(map)
@@ -125,7 +128,10 @@ function refreshMapMarkers() {
         <strong>${loc.tag || 'Lokacija'}</strong><br>
         ${loc.datum || ''} ${loc.sat || ''}<br>
         ${loc.biljeska || ''}<br>
-        <a href="${mapsUrl}" target="_blank">📍 Otvori u Maps</a>
+        <div style="margin-top:8px; display:flex; gap:6px;">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}" target="_blank" style="background:#00e676; color:black; padding:4px 8px; border-radius:12px; text-decoration:none; font-weight:bold; font-size:11px;">🚗 Navigiraj</a>
+            <a href="${mapsUrl}" target="_blank" style="background:#0099cc; color:white; padding:4px 8px; border-radius:12px; text-decoration:none; font-weight:bold; font-size:11px;">📍 Mape</a>
+        </div>
       `);
 
         mapMarkers.push(marker);
