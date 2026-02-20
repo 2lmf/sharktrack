@@ -43,11 +43,16 @@ async function getLocations() {
     return apiGet({ action: 'getLocations' });
 }
 
+async function sendReport(data) {
+    return apiPost({ action: 'sendReport', ...data });
+}
+
 window.SheetsAPI = {
     saveLocation,
     saveRoute,
     uploadPhoto,
     updateLocation,
     getLocations,
+    sendReport,
     isConfigured: () => SCRIPT_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
 };

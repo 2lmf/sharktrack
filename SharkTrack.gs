@@ -21,6 +21,7 @@ function doPost(e) {
       case 'saveRoute':    result = saveRoute(data);    break;
       case 'uploadPhoto':  result = uploadPhoto(data);  break;
       case 'updateLocation': result = updateLocation(data); break;
+      case 'sendReport':   result = sendDailyReport(data); break;
       default:
         result = { success: false, error: 'Unknown action: ' + action };
     }
@@ -225,6 +226,113 @@ function getLocations() {
     .filter(loc => loc.lat && loc.lng); // Filter invalid rows
 
   return { success: true, locations: locations };
+}
+
+// ============================================================
+// SEND DAILY REPORT (EMAIL PDF)
+// ============================================================
+
+function sendDailyReport(data) {
+  // data: { date, stats: {total, ...}, locations: [...] }
+  
+  // 1. Generate HTML
+  const htmlContent = createReportHtml(data);
+  
+  // 2. Convert to PDF
+  const blob = Utilities.newBlob(htmlContent, 'text/html', `SharkTrack_Report_${data.date}.html`);
+  const pdf = blob.getAs('application/pdf').setName(`SharkTrack_Izvjestaj_${data.date}.pdf`);
+  
+  // 3. Send Email
+  const recipient = Session.getActiveUser().getEmail(); // Sends to the owner of the script/user running it
+  const subject = `🦈 SharkTrack Dnevni Izvještaj - ${data.date}`;
+  const body = `Bok,\n\nU privitku je tvoj dnevni izvještaj za ${data.date}.\n\nUkupno lokacija: ${data.stats.total}\n\nLijep pozdrav,\nSharkTrack`;
+  
+  MailApp.sendEmail({
+    to: recipient,
+    subject: subject,
+    body: body,
+    attachments: [pdf]
+  });
+  
+  return { success: true };
+}
+
+function createReportHtml(data) {
+  const locs = data.locations || [];
+  
+  let rows = '';
+  locs.forEach(loc => {
+      const statusColor = loc.status === 'Zatvoren posao' ? '#dcfce7' : '#f1f5f9';
+      rows += `
+        <tr style="background-color: ${statusColor};">
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${loc.sat}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${loc.tag || '-'}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>${loc.contact || '-'}</strong><br><span style="color:#64748b; font-size:12px;">${loc.biljeska || ''}</span></td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${loc.status || 'Nova'}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><a href="${loc.mapsLink}" style="color:#0099cc; text-decoration:none;">Mape</a></td>
+        </tr>
+      `;
+  });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: 'Helvetica', sans-serif; color: #1e293b; }
+        .header { background: #0a0a1a; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; justify-content: space-around; background: #f8fafc; padding: 15px; border-radius: 8px; }
+        .stat-box { text-align: center; }
+        .stat-val { font-size: 24px; font-weight: bold; color: #00d4ff; }
+        .stat-label { font-size: 12px; text-transform: uppercase; color: #64748b; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px; background: #f1f5f9; color: #475569; font-size: 12px; text-transform: uppercase; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #94a3b8; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1 style="margin:0;">🦈 SharkTrack</h1>
+        <p style="margin:5px 0 0; opacity:0.8;">Dnevni Izvještaj • ${data.date}</p>
+      </div>
+      
+      <div class="stats">
+        <div class="stat-box">
+            <div class="stat-val">${data.stats.total}</div>
+            <div class="stat-label">Lokacija</div>
+        </div>
+        <div class="stat-box">
+             <div class="stat-val">${data.stats.contacted}</div>
+            <div class="stat-label">Kontaktirano</div>
+        </div>
+         <div class="stat-box">
+             <div class="stat-val">${data.stats.offers}</div>
+            <div class="stat-label">Ponuda</div>
+        </div>
+      </div>
+
+      <h3>Pregled aktivnosti</h3>
+      <table>
+        <thead>
+            <tr>
+                <th>Vrijeme</th>
+                <th>Tip</th>
+                <th>Info / Bilješka</th>
+                <th>Status</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rows}
+        </tbody>
+      </table>
+      
+      <div class="footer">
+        Generirano putem SharkTrack aplikacije • ${new Date().toLocaleString()}
+      </div>
+    </body>
+    </html>
+  `;
 }
 
 // ============================================================

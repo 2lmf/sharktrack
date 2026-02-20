@@ -134,8 +134,13 @@
 
         <!-- DAILY SUMMARY -->
         <div class="section-card summary-card">
-            <h3 class="section-title">Danas</h3>
-            <div class="summary-stats">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="section-title" style="margin-bottom:0;">Danas</h3>
+                <button id="btnSendReport"
+                    style="background:none; border:none; font-size:0.8rem; color:var(--accent); cursor:pointer;">📧
+                    Pošalji izvještaj</button>
+            </div>
+            <div class="summary-stats" style="margin-top:12px;">
                 <div class="summary-stat">
                     <span class="summary-val" id="summaryCount">0</span>
                     <span class="summary-lbl">lokacija</span>

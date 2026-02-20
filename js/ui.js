@@ -419,6 +419,72 @@ function setSaveFeedback(msg, color = 'var(--green)') {
     }
 }
 
+// ---- SEND REPORT ----
+async function handleSendReport() {
+    const btn = document.getElementById('btnSendReport');
+    if (!btn) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Šaljem...';
+    btn.disabled = true;
+
+    try {
+        // Gather data
+        const now = new Date();
+        const dateStr = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+
+        // Filter locations for today (independent of current view filter)
+        const allLocs = [...sessionLocations, ...(window.Geofence?.locations || [])];
+        const unique = allLocs.filter((l, index, self) =>
+            index === self.findIndex((t) => (
+                t.lat === l.lat && t.lng === l.lng && t.datum === l.datum && t.sat === l.sat
+            ))
+        );
+
+        const todayLocs = unique.filter(l => l.datum === dateStr);
+
+        if (todayLocs.length === 0) {
+            throw new Error('Nema zabilježenih lokacija za danas.');
+        }
+
+        const stats = {
+            total: todayLocs.length,
+            contacted: todayLocs.filter(l => l.kontakt).length,
+            offers: todayLocs.filter(l => l.status === 'Poslana ponuda').length
+        };
+
+        const reportData = {
+            date: dateStr,
+            stats: stats,
+            locations: todayLocs
+        };
+
+        // Send to backend
+        const result = await window.SheetsAPI.sendReport(reportData);
+
+        if (result.success) {
+            showToast('✅ Izvještaj poslan na email!');
+        } else {
+            throw new Error(result.error || 'Greška pri slanju');
+        }
+
+    } catch (err) {
+        console.error(err);
+        showToast('❌ ' + err.message);
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
+}
+
+function initReportButton() {
+    const btn = document.getElementById('btnSendReport');
+    if (btn) {
+        btn.addEventListener('click', handleSendReport);
+    }
+}
+
+
 window.UI = {
     setGPSStatus,
     updateOnlineStatus,
@@ -431,11 +497,12 @@ window.UI = {
     renderList,
     updateSummary,
     showStatusModal,
-    initModals, // New unified init
-    initStatusModal: () => { }, // Deprecated, kept for app.js compat if needed
+    initModals,
+    initStatusModal: () => { },
     initFilters,
     setSaveFeedback,
-    openEditModal
+    openEditModal,
+    initReportButton // Add to export
 };
 
 // Make shareLocation global for inline onclick
