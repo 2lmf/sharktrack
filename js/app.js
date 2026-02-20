@@ -16,7 +16,8 @@ async function init() {
     // Init UI components
     window.UI.initTabs();
     window.UI.initFilters();
-    window.UI.initModals(); // Changed from initStatusModal
+    window.UI.initModals();
+    window.UI.initReportButton(); // Initialize report button
     window.UI.updateOnlineStatus();
     window.UI.updateSummary();
 
