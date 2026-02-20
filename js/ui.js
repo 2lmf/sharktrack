@@ -211,9 +211,10 @@ function renderList() {
         <div class="location-coords">${Number(loc.lat).toFixed(5)}, ${Number(loc.lng).toFixed(5)}</div>
         ${loc.fotoLink ? `<img class="location-photo" src="${loc.fotoLink}" alt="Foto" onclick="window.open('${loc.fotoLink}','_blank')" />` : ''}
         <div class="location-actions">
-          <button class="btn-maps" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
-          <button class="btn-share" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
-          <span class="location-status">${isPending ? '⏳ Čeka sync' : (loc.status || 'Nova')}</span>
+          <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding:6px 12px; border:none; cursor:pointer;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj</button>
+          <button class="btn-maps" style="border-radius:50px;" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
+          <button class="btn-share" style="border-radius:50px;" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
+          <span class="location-status" style="border-radius:50px;">${isPending ? '⏳ Čeka sync' : (loc.status || 'Nova')}</span>
           ${canEdit ? `<button class="btn-edit" data-idx="${i}" style="margin-left:auto; background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; color:white;">✏️ Uredi</button>` : ''}
         </div>
       </div>`;
