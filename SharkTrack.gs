@@ -305,3 +305,9 @@ function forceAuthAndTest() {
   });
   Logger.log(JSON.stringify(res));
 }
+
+// Minimalni test koji samo šalje mail da Google MORA pitati za dozvolu
+function ultraSimpleMailTest() {
+  MailApp.sendEmail(MY_EMAIL, "Test", "Ako ovo vidiš, dozvole rade!");
+  Logger.log("Mail poslan!");
+}
