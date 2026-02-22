@@ -68,8 +68,8 @@ body {
 }
 
 .header-logo {
-    height: 120px;
-    width: auto;
+    width: 100px;
+    height: auto;
     object-fit: contain;
     border-radius: 6px;
 }

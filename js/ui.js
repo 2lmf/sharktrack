@@ -214,8 +214,10 @@ function renderList() {
           <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding:6px 12px; border:none; cursor:pointer;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj</button>
           <button class="btn-maps" style="border-radius:50px;" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
           <button class="btn-share" style="border-radius:50px;" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
-          <span class="location-status" style="border-radius:50px;">${isPending ? '⏳ Čeka sync' : (loc.status || 'Nova')}</span>
-          ${canEdit ? `<button class="btn-edit" data-idx="${i}" style="margin-left:auto; background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; color:white;">✏️ Uredi</button>` : ''}
+          ${canEdit ? `<div style="margin-left:auto; display:flex; gap:6px;">
+             <button class="btn-edit" data-idx="${i}" style="background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; color:white;">✏️ Uredi</button>
+             <button class="btn-delete" data-idx="${i}" style="background:var(--red); border:none; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; font-weight:bold;">🗑️ Briši</button>
+          </div>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -225,6 +227,46 @@ function renderList() {
         btn.addEventListener('click', (e) => {
             const idx = parseInt(btn.dataset.idx);
             openEditModal(filtered[idx]);
+        });
+    });
+
+    // Attach delete listeners
+    container.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const idx = parseInt(btn.dataset.idx);
+            const loc = filtered[idx];
+
+            if (confirm(`Želiš li zaista izbrisati lokaciju "${loc.tag || 'Lokacija'}"?`)) {
+                try {
+                    btn.textContent = '⏳...';
+                    btn.disabled = true;
+
+                    const res = await window.SheetsAPI.deleteLocation({ rowIndex: loc.rowIndex });
+                    if (res.success) {
+                        showToast('✅ Lokacija izbrisana!');
+
+                        // Ukloni je iz session arraya
+                        const sIdx = sessionLocations.findIndex(l => l.rowIndex === loc.rowIndex);
+                        if (sIdx > -1) sessionLocations.splice(sIdx, 1);
+
+                        // Ukloni je iz geofence učitanih
+                        if (window.Geofence && window.Geofence.locations) {
+                            const gfIdx = window.Geofence.locations.findIndex(l => l.rowIndex === loc.rowIndex);
+                            if (gfIdx > -1) window.Geofence.locations.splice(gfIdx, 1);
+                        }
+
+                        updateSummary();
+                        renderList();
+                        refreshMapMarkers();
+                    } else {
+                        throw new Error(res.error || 'Neuspješno brisanje');
+                    }
+                } catch (err) {
+                    showToast('❌ Greška: ' + err.message);
+                    btn.textContent = '🗑️ Briši';
+                    btn.disabled = false;
+                }
+            }
         });
     });
 }

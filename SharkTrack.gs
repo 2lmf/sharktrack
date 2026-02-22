@@ -21,6 +21,7 @@ function doPost(e) {
       case 'saveRoute':    result = saveRoute(data);    break;
       case 'uploadPhoto':  result = uploadPhoto(data);  break;
       case 'updateLocation': result = updateLocation(data); break;
+      case 'deleteLocation': result = deleteLocation(data); break;
       case 'sendReport':   result = sendDailyReport(data); break;
       default:
         result = { success: false, error: 'Unknown action: ' + action };
@@ -121,6 +122,26 @@ function updateLocation(data) {
       ensureKontaktColumn(sheet);
       sheet.getRange(rowIndex, 10).setValue(data.contact);
   }
+
+  return { success: true };
+}
+
+// ============================================================
+// DELETE LOCATION
+// ============================================================
+
+function deleteLocation(data) {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sheet = ss.getSheetByName('Lokacije');
+  
+  if (!sheet) return { success: false, error: 'Sheet Lokacije not found' };
+
+  const rowIndex = parseInt(data.rowIndex);
+  if (isNaN(rowIndex) || rowIndex < 2) {
+    return { success: false, error: 'Invalid rowIndex' };
+  }
+  
+  sheet.deleteRow(rowIndex);
 
   return { success: true };
 }

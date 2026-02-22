@@ -39,6 +39,10 @@ async function updateLocation(data) {
     return apiPost({ action: 'updateLocation', ...data });
 }
 
+async function deleteLocation(data) {
+    return apiPost({ action: 'deleteLocation', ...data });
+}
+
 async function getLocations() {
     return apiGet({ action: 'getLocations' });
 }
@@ -52,6 +56,7 @@ window.SheetsAPI = {
     saveRoute,
     uploadPhoto,
     updateLocation,
+    deleteLocation,
     getLocations,
     sendReport,
     isConfigured: () => SCRIPT_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
