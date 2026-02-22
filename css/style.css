@@ -2,7 +2,7 @@
    SharkTrack - Mobile-First Dark Design
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 /* ---- RESET & BASE ---- */
 *,
@@ -14,10 +14,10 @@
 }
 
 :root {
-    --bg: #111111;
-    --bg2: #1a1a1a;
-    --bg3: #222222;
-    --card: #181818;
+    --bg: #000000;
+    --bg2: #0a0a0a;
+    --bg3: #121212;
+    --card: #0a0a0a;
     --border: rgba(255, 255, 255, 0.1);
     --accent: #E67E22;
     --accent2: #D35400;
@@ -37,7 +37,7 @@ html,
 body {
     height: 100%;
     overflow: hidden;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-tap-highlight-color: transparent;
@@ -51,7 +51,7 @@ body {
     left: 0;
     right: 0;
     height: var(--header-h);
-    background: rgba(10, 10, 26, 0.95);
+    background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -428,7 +428,7 @@ body {
     padding: 10px 14px;
     color: var(--text);
     font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     outline: none;
     transition: border-color 0.2s;
 }
@@ -810,7 +810,7 @@ body {
     left: 0;
     right: 0;
     height: var(--nav-h);
-    background: rgba(10, 10, 26, 0.97);
+    background: rgba(0, 0, 0, 0.97);
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
     display: flex;
@@ -1014,7 +1014,7 @@ body {
     color: #f0f0ff;
     caret-color: #f0f0ff;
     font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     outline: none;
     transition: border-color 0.2s;
     resize: none;
@@ -1089,7 +1089,7 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
     transition: opacity 0.2s;
 }
@@ -1105,7 +1105,7 @@ body {
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background: transparent;
     color: var(--text2);
     transition: all 0.2s;

@@ -5,7 +5,7 @@
     "start_url": "/sharktrack/index.html",
     "scope": "/sharktrack/",
     "display": "standalone",
-    "background_color": "#111111",
+    "background_color": "#000000",
     "theme_color": "#E67E22",
     "orientation": "portrait",
     "icons": [
