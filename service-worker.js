@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v11 - Absolute cache break
-const CACHE_NAME = 'sharktrack-v11';
+// v12 - Fix font inheritance for buttons
+const CACHE_NAME = 'sharktrack-v12';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
