@@ -2,7 +2,7 @@
    SharkTrack - Mobile-First Dark Design
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
 
 /* ---- RESET & BASE ---- */
 *,
@@ -37,7 +37,7 @@ html,
 body {
     height: 100%;
     overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-tap-highlight-color: transparent;
@@ -428,7 +428,7 @@ body {
     padding: 10px 14px;
     color: var(--text);
     font-size: 0.9rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     outline: none;
     transition: border-color 0.2s;
 }
@@ -1014,7 +1014,7 @@ body {
     color: #f0f0ff;
     caret-color: #f0f0ff;
     font-size: 0.95rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     outline: none;
     transition: border-color 0.2s;
     resize: none;
@@ -1089,7 +1089,7 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     letter-spacing: 0.5px;
     transition: opacity 0.2s;
 }
@@ -1105,7 +1105,7 @@ body {
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 0.9rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     background: transparent;
     color: var(--text2);
     transition: all 0.2s;

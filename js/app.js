@@ -14,7 +14,7 @@ async function init() {
         });
 
         // Register service worker with a cache-busting query parameter
-        navigator.serviceWorker.register('service-worker.js?v=9').catch(console.warn);
+        navigator.serviceWorker.register('service-worker.js?v=10').catch(console.warn);
     }
 
     // Init offline DB

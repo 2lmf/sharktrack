@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v9 - Network First strategy for assets to prevent stale views
-const CACHE_NAME = 'sharktrack-v9';
+// v10 - Replace Montserrat with Orbitron font
+const CACHE_NAME = 'sharktrack-v10';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
