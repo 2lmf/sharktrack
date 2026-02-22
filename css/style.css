@@ -14,18 +14,18 @@
 }
 
 :root {
-    --bg: #0a0a1a;
-    --bg2: #111128;
-    --bg3: #1a1a35;
-    --card: #16162e;
-    --border: rgba(255, 255, 255, 0.08);
-    --accent: #00d4ff;
-    --accent2: #0099cc;
-    --green: #00e676;
-    --red: #ff4444;
-    --orange: #ff9800;
+    --bg: #111111;
+    --bg2: #1a1a1a;
+    --bg3: #222222;
+    --card: #181818;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #E67E22;
+    --accent2: #D35400;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --orange: #E67E22;
     --text: #f0f0ff;
-    --text2: #8888aa;
+    --text2: #aaaaaa;
     --radius: 16px;
     --radius-sm: 10px;
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -78,7 +78,7 @@ body {
 .logo {
     font-size: 1.2rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    background: linear-gradient(135deg, var(--accent), #D35400);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -178,7 +178,7 @@ body {
     border-radius: var(--radius);
     padding: 14px;
     z-index: 200;
-    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 30px rgba(230, 126, 34, 0.3);
     display: none;
     animation: slideDown 0.3s ease;
 }
@@ -292,7 +292,7 @@ body {
 
 .btn-save {
     width: 100%;
-    background: linear-gradient(135deg, #00d4ff 0%, #0066ff 50%, #7c3aed 100%);
+    background: linear-gradient(135deg, #E67E22 0%, #D35400 50%, #A04000 100%);
     border: none;
     border-radius: 20px;
     padding: 28px 20px;
@@ -301,7 +301,7 @@ body {
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    box-shadow: 0 8px 32px rgba(0, 212, 255, 0.35);
+    box-shadow: 0 8px 32px rgba(230, 126, 34, 0.35);
     transition: transform 0.1s, box-shadow 0.2s;
     position: relative;
     overflow: hidden;
@@ -317,7 +317,7 @@ body {
 
 .btn-save:active {
     transform: scale(0.97);
-    box-shadow: 0 4px 16px rgba(0, 212, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(230, 126, 34, 0.2);
 }
 
 .btn-save.loading {
@@ -405,8 +405,8 @@ body {
 
 .tag-btn.active {
     border-color: var(--accent);
-    background: rgba(0, 212, 255, 0.1);
-    box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+    background: rgba(230, 126, 34, 0.1);
+    box-shadow: 0 0 12px rgba(230, 126, 34, 0.2);
 }
 
 .tag-btn.active span {
@@ -708,9 +708,9 @@ body {
     font-weight: 700;
     padding: 3px 8px;
     border-radius: 50px;
-    background: rgba(0, 212, 255, 0.15);
+    background: rgba(230, 126, 34, 0.15);
     color: var(--accent);
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(230, 126, 34, 0.3);
 }
 
 .location-time {
@@ -918,7 +918,7 @@ body {
 }
 
 .status-btn:active {
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(230, 126, 34, 0.1);
     border-color: var(--accent);
 }
 
