@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v10 - Replace Montserrat with Orbitron font
-const CACHE_NAME = 'sharktrack-v10';
+// v11 - Absolute cache break
+const CACHE_NAME = 'sharktrack-v11';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
