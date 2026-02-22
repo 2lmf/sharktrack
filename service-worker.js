@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v7 - Deep Black theme, Montserrat font, Delete location feature
-const CACHE_NAME = 'sharktrack-v7';
+// v8 - Fixed broken HTML body and bumped script/css versions
+const CACHE_NAME = 'sharktrack-v8';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
