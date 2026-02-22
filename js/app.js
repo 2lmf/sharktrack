@@ -5,9 +5,16 @@
 let selectedTag = null;
 
 async function init() {
-    // Register service worker
+    // Clear all old SW and register fresh
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js').catch(console.warn);
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+                registration.update();
+            }
+        });
+
+        // Register service worker with a cache-busting query parameter
+        navigator.serviceWorker.register('service-worker.js?v=9').catch(console.warn);
     }
 
     // Init offline DB

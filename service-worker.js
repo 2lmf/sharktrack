@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v8 - Fixed broken HTML body and bumped script/css versions
-const CACHE_NAME = 'sharktrack-v8';
+// v9 - Network First strategy for assets to prevent stale views
+const CACHE_NAME = 'sharktrack-v9';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
@@ -46,8 +46,17 @@ self.addEventListener('fetch', e => {
         return;
     }
 
+    // Try network first for everything, fallback to cache if offline
     e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
+        fetch(e.request)
+            .then(response => {
+                // Return network response, optionally we could put it in cache here
+                return response;
+            })
+            .catch(() => {
+                // If network fails (offline), try cache
+                return caches.match(e.request);
+            })
     );
 });
 
