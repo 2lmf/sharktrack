@@ -184,9 +184,7 @@ const Planner = {
         container.innerHTML = locations.map(loc => {
             const tagEmoji = { 'Stambeno': '🏠', 'Industrijsko': '🏭', 'Poslovno': '🏢', 'Nepoznato': '❓' };
             const emoji = tagEmoji[loc.tag] || '📍';
-            const mapsUrl = loc.mapsLink || `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
-
-            // Distance from route is stored in loc._distFromRoute
+            const reliableMapsUrl = `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
             const distLabel = loc._distFromRoute ? `<span style="font-size:0.75rem; color:#aaa;">(Odstupanje: ${loc._distFromRoute.toFixed(1)}km)</span>` : '';
 
             return `
@@ -197,9 +195,8 @@ const Planner = {
                 </div>
                 ${loc.biljeska ? `<div class="location-note">${loc.biljeska}</div>` : ''}
                 <div class="location-actions">
-                  <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding: 6px 14px; min-width: 100px;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj</button>
-                  <button class="btn-maps" onclick="window.open('${mapsUrl}','_blank')">🗺️ Maps</button>
-                  <button class="btn-share" onclick="window.shareLocation('${mapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
+                  <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding: 8px 16px; flex: 1.5;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj / Mapa</button>
+                  <button class="btn-share" style="flex:1;" onclick="window.shareLocation('${reliableMapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
                 </div>
               </div>`;
         }).join('');
