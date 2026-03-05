@@ -126,7 +126,7 @@ function refreshMapMarkers() {
         ${loc.datum || ''} ${loc.sat || ''}<br>
         ${loc.biljeska || ''}<br>
         <div style="margin-top:8px;">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}" target="_blank" style="background:#00e676; color:black; padding:8px 12px; border-radius:12px; text-decoration:none; font-weight:bold; font-size:12px; display:block; text-align:center;">🚗 Navigiraj / Mapa</a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}" target="_blank" class="btn-nav" style="text-decoration:none; display:flex;">🚗 Navigiraj / Mapa</a>
         </div>
       `);
 
@@ -207,8 +207,8 @@ function renderList() {
         <div class="location-coords">${Number(loc.lat).toFixed(5)}, ${Number(loc.lng).toFixed(5)}</div>
         ${loc.fotoLink ? `<img class="location-photo" src="${loc.fotoLink}" alt="Foto" onclick="window.open('${loc.fotoLink}','_blank')" />` : ''}
         <div class="location-actions">
-          <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding:8px 16px; border:none; cursor:pointer; flex: 1.5;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj / Mapa</button>
-          <button class="btn-share" style="border-radius:50px; flex:1;" onclick="window.shareLocation('${reliableMapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
+          <button class="btn-nav" style="flex: 1.5;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj / Mapa</button>
+          <button class="btn-share" style="flex:1;" onclick="window.shareLocation('${reliableMapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
           ${canEdit ? `<div style="margin-left:auto; display:flex; gap:6px;">
              <button class="btn-edit" data-idx="${i}" style="background:var(--bg3); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; color:white;">✏️ Uredi</button>
              <button class="btn-delete" data-idx="${i}" style="background:var(--red); border:none; padding:6px 12px; border-radius:8px; cursor:pointer; color:white; font-weight:bold;">🗑️ Briši</button>

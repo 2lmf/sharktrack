@@ -195,7 +195,7 @@ const Planner = {
                 </div>
                 ${loc.biljeska ? `<div class="location-note">${loc.biljeska}</div>` : ''}
                 <div class="location-actions">
-                  <button class="btn-nav" style="background:var(--green); color:#000; font-weight:700; border-radius:50px; padding: 8px 16px; flex: 1.5;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj / Mapa</button>
+                  <button class="btn-nav" style="flex: 1.5;" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}','_blank')">🚗 Navigiraj / Mapa</button>
                   <button class="btn-share" style="flex:1;" onclick="window.shareLocation('${reliableMapsUrl}', '${loc.tag || ''}')">📤 Dijeli</button>
                 </div>
               </div>`;
