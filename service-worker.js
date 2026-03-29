@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v12 - Fix font inheritance for buttons
-const CACHE_NAME = 'sharktrack-v12';
+// v13 - New app icon
+const CACHE_NAME = 'sharktrack-v13';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
