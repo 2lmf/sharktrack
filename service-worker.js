@@ -1,6 +1,6 @@
 // SharkTrack Service Worker - Offline Support
-// v14 - Smaller app icon text
-const CACHE_NAME = 'sharktrack-v14';
+// v15 - Solid black background icon
+const CACHE_NAME = 'sharktrack-v15';
 const BASE = '/sharktrack';
 const ASSETS = [
     `${BASE}/`,
